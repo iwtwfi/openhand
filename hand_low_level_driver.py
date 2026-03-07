@@ -51,17 +51,19 @@ class GPIO16Controller:
             raise ValueError("gpio_states 长度必须在 1-16")
         return bytes([self.CMD_WRITE_CONTINUOUS] + [0x01 if s else 0x00 for s in gpio_states])
 
-    def set_gpio_batch(self, gpio_states: List[bool]) -> bool:
+    def set_gpio_batch(self, gpio_states: List[bool], verbose: bool = True) -> bool:
         """发送 3B 连续批量控制指令。"""
         if not self._ensure_connected():
             return False
 
         try:
             frame = self._build_3b_frame(gpio_states)
-            print(f"→ 发送 3B 连续写帧: {frame.hex(' ').upper()}")
+            if verbose:
+                print(f"→ 发送 3B 连续写帧: {frame.hex(' ').upper()}")
             self.ser.reset_input_buffer()
             self.ser.write(frame)
-            print(f"✓ 已下发 {len(gpio_states)} 路连续写指令")
+            if verbose:
+                print(f"✓ 已下发 {len(gpio_states)} 路连续写指令")
             return True
         except Exception as e:
             print(f"✗ 发送失败: {e}")
