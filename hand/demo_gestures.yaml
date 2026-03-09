@@ -1,0 +1,194 @@
+# Demo 手势模板（归一化控制）
+#
+# 约定：
+# 1) 所有值均为 u ∈ [0, 1]
+# 2) 语义定义：
+#    - u=0: 左右摆动自由度最左；屈伸关节最展开
+#    - u=1: 左右摆动自由度最右；屈伸关节最收拢
+# 3) 实际方向由 hand_runtime.yaml 中 calibration.reverse 决定
+# 4) 本文件只描述“手势语义值”，不直接写通道号、不写角度
+#
+# 每指自由度顺序（必须严格一致）：
+# - thumb:  [DOF1, DOF2, DOF3, DOF4]
+# - index:  [DOF1, DOF2, DOF3]
+# - middle: [DOF1, DOF2, DOF3]
+# - ring:   [DOF1, DOF2, DOF3]
+# - little: [DOF1, DOF2, DOF3]
+#
+# 说明：
+# - DOF1: 左右摆动
+# - DOF2: 近掌心关节屈伸
+# - DOF3: 远掌心关节屈伸
+# - DOF4: 拇指额外自由度
+
+version: 1
+
+# 全局默认参数（给动作播放器使用）
+defaults:
+  step_ms: 20          # 插值步长（每步间隔）
+  transition_ms: 400   # 相邻手势默认过渡时长
+  hold_ms: 500         # 到达目标后的默认停留时长
+  enable: true         # 下发时默认使能
+
+gestures:
+  # -------------------------
+  # 基础手势
+  # -------------------------
+
+  open_hand:
+    # 五指展开
+    thumb:  [0.0, 0.0, 0.0, 0.2]
+    index:  [0.0, 0.0, 0.0]
+    middle: [0.0, 0.0, 0.0]
+    ring:   [0.0, 0.0, 0.0]
+    little: [0.0, 0.0, 0.0]
+
+  fist:
+    # 五指收拢
+    thumb:  [1.0, 1.0, 1.0, 0.8]
+    index:  [1.0, 1.0, 1.0]
+    middle: [1.0, 1.0, 1.0]
+    ring:   [1.0, 1.0, 1.0]
+    little: [1.0, 1.0, 1.0]
+
+  half_fist:
+    # 半握拳（适合作为过渡姿态）
+    thumb:  [0.6, 0.6, 0.6, 0.5]
+    index:  [0.6, 0.6, 0.6]
+    middle: [0.6, 0.6, 0.6]
+    ring:   [0.6, 0.6, 0.6]
+    little: [0.6, 0.6, 0.6]
+
+  point:
+    # 食指指向：食指展开，其他收拢
+    thumb:  [0.4, 0.8, 0.8, 0.6]
+    index:  [0.0, 0.0, 0.0]
+    middle: [1.0, 1.0, 1.0]
+    ring:   [1.0, 1.0, 1.0]
+    little: [1.0, 1.0, 1.0]
+
+  peace:
+    # V 手势：食指/中指展开，其余收拢
+    thumb:  [0.5, 0.8, 0.8, 0.6]
+    index:  [0.0, 0.0, 0.0]
+    middle: [0.0, 0.0, 0.0]
+    ring:   [1.0, 1.0, 1.0]
+    little: [1.0, 1.0, 1.0]
+
+  thumbs_up:
+    # 点赞：拇指展开，四指收拢
+    thumb:  [0.2, 0.1, 0.1, 0.2]
+    index:  [1.0, 1.0, 1.0]
+    middle: [1.0, 1.0, 1.0]
+    ring:   [1.0, 1.0, 1.0]
+    little: [1.0, 1.0, 1.0]
+
+  call_me:
+    # 打电话：拇指+小指展开，其余收拢
+    thumb:  [0.2, 0.2, 0.2, 0.3]
+    index:  [1.0, 1.0, 1.0]
+    middle: [1.0, 1.0, 1.0]
+    ring:   [1.0, 1.0, 1.0]
+    little: [0.0, 0.0, 0.0]
+
+  rock:
+    # 摇滚手势：食指+小指展开，其余收拢
+    thumb:  [0.8, 1.0, 1.0, 0.8]
+    index:  [0.0, 0.0, 0.0]
+    middle: [1.0, 1.0, 1.0]
+    ring:   [1.0, 1.0, 1.0]
+    little: [0.0, 0.0, 0.0]
+
+  ok_sign:
+    # OK：拇指和食指靠近，另外三指展开
+    thumb:  [0.3, 0.7, 0.7, 0.5]
+    index:  [0.8, 0.8, 0.8]
+    middle: [0.0, 0.0, 0.0]
+    ring:   [0.0, 0.0, 0.0]
+    little: [0.0, 0.0, 0.0]
+
+  pinch_index:
+    # 拇指+食指捏合
+    thumb:  [0.3, 0.8, 0.8, 0.6]
+    index:  [0.8, 0.8, 0.8]
+    middle: [0.4, 0.6, 0.6]
+    ring:   [0.4, 0.6, 0.6]
+    little: [0.4, 0.6, 0.6]
+
+  pinch_middle:
+    # 拇指+中指捏合
+    thumb:  [0.4, 0.8, 0.8, 0.6]
+    index:  [0.4, 0.6, 0.6]
+    middle: [0.8, 0.8, 0.8]
+    ring:   [0.4, 0.6, 0.6]
+    little: [0.4, 0.6, 0.6]
+
+  # -------------------------
+  # 数字手势（1~5）
+  # -------------------------
+
+  digit_1:
+    # 1：食指展开，其余收拢
+    thumb:  [0.4, 0.8, 0.8, 0.6]
+    index:  [0.0, 0.0, 0.0]
+    middle: [1.0, 1.0, 1.0]
+    ring:   [1.0, 1.0, 1.0]
+    little: [1.0, 1.0, 1.0]
+
+  digit_2:
+    # 2：食指+中指展开，其余收拢
+    thumb:  [0.5, 0.8, 0.8, 0.6]
+    index:  [0.0, 0.0, 0.0]
+    middle: [0.0, 0.0, 0.0]
+    ring:   [1.0, 1.0, 1.0]
+    little: [1.0, 1.0, 1.0]
+
+  digit_3:
+    # 3：拇指+食指+中指展开（可按你习惯调整）
+    thumb:  [0.2, 0.2, 0.2, 0.3]
+    index:  [0.0, 0.0, 0.0]
+    middle: [0.0, 0.0, 0.0]
+    ring:   [1.0, 1.0, 1.0]
+    little: [1.0, 1.0, 1.0]
+
+  digit_4:
+    # 4：四指展开，拇指收拢
+    thumb:  [0.6, 1.0, 1.0, 0.8]
+    index:  [0.0, 0.0, 0.0]
+    middle: [0.0, 0.0, 0.0]
+    ring:   [0.0, 0.0, 0.0]
+    little: [0.0, 0.0, 0.0]
+
+  digit_5:
+    # 5：五指全展开
+    thumb:  [0.1, 0.0, 0.0, 0.2]
+    index:  [0.0, 0.0, 0.0]
+    middle: [0.0, 0.0, 0.0]
+    ring:   [0.0, 0.0, 0.0]
+    little: [0.0, 0.0, 0.0]
+
+# 动作序列示例：用于 demo 播放
+sequence:
+  - gesture: open_hand
+    hold_ms: 600
+  - gesture: digit_1
+    transition_ms: 400
+    hold_ms: 500
+  - gesture: digit_2
+    transition_ms: 400
+    hold_ms: 500
+  - gesture: digit_3
+    transition_ms: 400
+    hold_ms: 500
+  - gesture: digit_4
+    transition_ms: 400
+    hold_ms: 500
+  - gesture: digit_5
+    transition_ms: 400
+    hold_ms: 500
+  - gesture: fist
+    transition_ms: 500
+    hold_ms: 600
+  - gesture: open_hand
+    transition_ms: 500
+    hold_ms: 600
