@@ -6,7 +6,7 @@
 
 1. 底层驱动层：`hand_low_level_driver.py`，负责串口连接与 3B 帧发送。
 2. 调度层：`servo16_manager.py`，负责 16 路软件 PWM 实时调度与下发。
-3. 上层抽象层（建议新建）：负责五指语义控制、归一化输入映射、关节标定与防抖策略。
+3. 上层抽象层（建议新建）：负责五指语义控制、归一化输入映射与关节标定。
 
 边界约束：
 
@@ -92,37 +92,15 @@
    - 用途：整手联动、手势切换。
    - 行为：将多关节更新聚合成同一帧目标并批量下发，优先保证同步性。
 
-可选接口：
-
-1. `enable_joint(joint_id, enabled)`
-2. `enable_finger(finger_id, enabled)`
-3. `enable_all(enabled)`
-4. `get_state()`
-5. `emergency_stop()`
-
 ---
 
-## 5. 上层防抖与使能策略
+## 5. 上层策略
 
-建议在上层加入“指令防抖状态机”：
+当前实现不包含防抖状态机，保持最小语义：
 
-1. 输入滤波：低通或滑动平均，降低控制源噪声。
-2. 死区阈值 `eps`：变化小于阈值时，不触发目标更新。
-3. 静止释放 `hold_ms`：持续无变化后自动 `set_channel_enabled(False)`，减热和抖动。
-4. 唤醒阈值 `wake_eps`：变化超过阈值再使能并更新目标。
-5. 最小开关时长：`min_on_ms/min_off_ms`，防止使能位频繁抖动。
-
-参数建议起点：
-
-1. `eps=0.01~0.02`
-2. `wake_eps=0.03`
-3. `hold_ms=200~500`
-4. `min_on_ms=100`
-5. `min_off_ms=100`
-
-注意：
-
-1. 承载力矩的关节不应自动释放，否则会回弹。
+1. 输入 `u` 直接映射到角度并限幅。
+2. `enable=False` 时关闭对应通道。
+3. 同步动作通过批量 `set_targets(...)` 实现。
 
 ---
 
@@ -146,9 +124,8 @@
 
 1. 加载配置：
    - 串口参数（port/baudrate/timeout）
-   - 通道映射表
+   - 通道映射表（代码常量）
    - 16 关节 calibration
-   - 防抖参数
 2. 创建并连接 `GPIO16Controller`。
 3. 创建 `Servo16Manager(period_s=0.020, quantize_us=100)`。
 4. 调用 `manager.start()` 启动调度线程。
@@ -162,7 +139,7 @@
    - 单关节：`set_joint_u`
    - 单手指：`set_finger_u`
    - 整手联动：`set_hand_u`（推荐）
-3. 上层完成防抖与映射，再批量写入目标。
+3. 上层完成映射，再批量写入目标。
 4. 下层线程按周期持续执行发送。
 
 ### 7.3 退出阶段
@@ -180,7 +157,30 @@
 建议按以下顺序实现：
 
 1. 先做：映射表 + calibration 数据结构 + 三个核心接口。
-2. 再做：上层防抖状态机（死区、静止释放、唤醒）。
-3. 最后做：手势播放与轨迹插值（例如线性/S 曲线）。
+2. 再做：手势播放与轨迹插值（例如线性/S 曲线）。
 
 这样可以先快速打通可控链路，再逐步提升稳定性和动作质量。
+
+---
+
+## 9. 参考实现文件（已落地）
+
+1. `hand_upper_controller.py`
+   - 提供 `JointCalibration`、`HandUpperController`
+   - `HandUpperController.__init__` 必须接收整份配置并自动解析 calibration
+   - 不支持代码侧覆盖配置，所有参数仅来自 YAML
+   - 实现 `set_joint_u` / `set_finger_u` / `set_hand_u`
+2. `main_hand_runtime.py`
+   - 独立主程序入口
+   - 从 YAML 读取全部配置，负责 connect/start/loop/stop 生命周期
+   - 提供空运行骨架，等待外部控制器调用上层接口
+3. `hand_runtime.yaml`
+   - 统一配置文件（serial / manager / runtime / calibration）
+
+运行命令示例：
+
+```bash
+python3 main_hand_runtime.py --config hand_runtime.yaml
+```
+
+说明：`--config` 为必填参数，不传会直接报错退出。
