@@ -100,6 +100,18 @@ class Servo16Manager:
                 if enable:
                     self._configs[idx].enabled = True
 
+    def set_targets_and_relax(self, target_map: Dict[int, float], settle_s: float = 0.5) -> None:
+        """下发目标，等待到位后自动关闭对应通道，减少保持抖动。"""
+        if settle_s < 0:
+            raise ValueError("settle_s 必须 >= 0")
+        self.set_targets(target_map, enable=True)
+        if settle_s > 0:
+            time.sleep(settle_s)
+        with self._lock:
+            for channel in target_map.keys():
+                idx = self._assert_channel(channel)
+                self._configs[idx].enabled = False
+
     def set_target_list(self, angles_deg: List[float], enable: bool = True) -> None:
         if len(angles_deg) != self.CHANNEL_COUNT:
             raise ValueError("angles_deg 长度必须为 16")

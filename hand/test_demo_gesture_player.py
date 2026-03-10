@@ -4,19 +4,40 @@
 
 from __future__ import annotations
 
+import time
+
 from demo_gesture_player import DemoGesturePlayer
 
-CONFIG_PATH = "hand_runtime.yaml"
-DEMO_PATH = "demo_gestures.yaml"
 
 def main() -> None:
-    """单手势播放测试入口。"""
-    player = DemoGesturePlayer(CONFIG_PATH, DEMO_PATH)
+    """手势播放测试入口（连续两个明显姿态）。"""
+    player = DemoGesturePlayer()
     try:
         player.start()
-        player.play_gesture("digit_1", transition_ms=300, hold_ms=300, enable=True)
-        stats = player.get_stats()
-        assert isinstance(stats, dict), "stats 应为字典"
+        print("play: open_hand")
+        player.play_gesture(
+            "open_hand",
+            hold_ms=5000,
+            enable=True,
+            settle_s=1.0,
+            relax_after_settle=True,
+        )
+        print("play: fist")
+        player.play_gesture(
+            "peace",
+            hold_ms=5000,
+            enable=True,
+            settle_s=1.0,
+            relax_after_settle=True,
+        )
+        print("play: open_hand")
+        player.play_gesture(
+            "open_hand",
+            hold_ms=5000,
+            enable=True,
+            settle_s=1.0,
+            relax_after_settle=True,
+        )
     finally:
         player.close()
 

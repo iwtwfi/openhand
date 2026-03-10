@@ -10,7 +10,6 @@
 
 from __future__ import annotations
 
-import argparse
 from pathlib import Path
 import time
 from typing import Any
@@ -24,12 +23,7 @@ try:
 except ModuleNotFoundError as exc:
     raise SystemExit("missing dependency: pyyaml (pip install pyyaml)") from exc
 
-
-def parse_args() -> argparse.Namespace:
-    """解析命令行参数（仅配置文件路径）。"""
-    parser = argparse.ArgumentParser(description="Hand runtime over Servo16Manager")
-    parser.add_argument("--config", required=True, help="yaml config path")
-    return parser.parse_args()
+CONFIG_PATH = Path(__file__).with_name("hand_runtime.yaml")
 
 
 def _require_dict(root: dict[str, Any], key: str) -> dict[str, Any]:
@@ -54,9 +48,8 @@ def load_config(path: str) -> dict[str, Any]:
 
 def main() -> None:
     """运行主流程：加载配置 -> 初始化 -> 启动循环 -> 安全退出。"""
-    args = parse_args()
     # 1) 读取整份配置（下层与上层共享同一份配置源）。
-    cfg = load_config(args.config)
+    cfg = load_config(str(CONFIG_PATH))
     # 2) 主程序只关心串口、调度、空转节拍这三段。
     serial_cfg = _require_dict(cfg, "serial")
     manager_cfg = _require_dict(cfg, "manager")
@@ -91,11 +84,17 @@ def main() -> None:
     try:
         # 6) 启动下层调度线程。
         manager.start()
-        upper.set_joint_u(channel=1, u=0.5, enable=True)
         print("runtime started, waiting for external controller, press Ctrl+C to exit")
         while True:
             # 7) 主循环不直接下发动作，仅等待外部逻辑调用：
             #    upper.set_joint_u / upper.set_finger_u / upper.set_hand_u
+            upper.set_finger_u(
+                finger="thumb",
+                u_list=[0.0, 0.0, 0.5, 0.5],
+                enable=True,
+                settle_s=0.5,
+                relax_after_settle=True,
+            )
             time.sleep(idle_sleep_s)
     except KeyboardInterrupt:
         print("stopped by user")

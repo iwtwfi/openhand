@@ -12,19 +12,19 @@ runtime:
   idle_sleep_s: 1.0
 
 calibration:
-  "1": {deg_min: 10.0, deg_max: 170.0, reverse: false, offset_deg: 0.0}
-  "2": {deg_min: 10.0, deg_max: 170.0, reverse: false, offset_deg: 0.0}
-  "3": {deg_min: 10.0, deg_max: 170.0, reverse: false, offset_deg: 0.0}
-  "4": {deg_min: 10.0, deg_max: 170.0, reverse: false, offset_deg: 0.0}
-  "5": {deg_min: 10.0, deg_max: 170.0, reverse: false, offset_deg: 0.0}
-  "6": {deg_min: 10.0, deg_max: 170.0, reverse: false, offset_deg: 0.0}
-  "7": {deg_min: 10.0, deg_max: 170.0, reverse: false, offset_deg: 0.0}
-  "8": {deg_min: 10.0, deg_max: 170.0, reverse: false, offset_deg: 0.0}
-  "9": {deg_min: 10.0, deg_max: 170.0, reverse: false, offset_deg: 0.0}
-  "10": {deg_min: 10.0, deg_max: 170.0, reverse: false, offset_deg: 0.0}
-  "11": {deg_min: 10.0, deg_max: 170.0, reverse: false, offset_deg: 0.0}
-  "12": {deg_min: 10.0, deg_max: 170.0, reverse: false, offset_deg: 0.0}
-  "13": {deg_min: 10.0, deg_max: 170.0, reverse: false, offset_deg: 0.0}
-  "14": {deg_min: 10.0, deg_max: 170.0, reverse: false, offset_deg: 0.0}
-  "15": {deg_min: 10.0, deg_max: 170.0, reverse: false, offset_deg: 0.0}
-  "16": {deg_min: 10.0, deg_max: 170.0, reverse: false, offset_deg: 0.0}
+  "1": {deg_min: 0.0, deg_max: 180.0, reverse: false, offset_deg: 0.0}
+  "2": {deg_min: 0.0, deg_max: 180.0, reverse: false, offset_deg: 0.0}
+  "3": {deg_min: 0.0, deg_max: 180.0, reverse: false, offset_deg: 0.0}
+  "4": {deg_min: 0.0, deg_max: 180.0, reverse: false, offset_deg: 0.0}
+  "5": {deg_min: 0.0, deg_max: 180.0, reverse: false, offset_deg: 0.0}
+  "6": {deg_min: 0.0, deg_max: 180.0, reverse: false, offset_deg: 0.0}
+  "7": {deg_min: 0.0, deg_max: 180.0, reverse: false, offset_deg: 0.0}
+  "8": {deg_min: 0.0, deg_max: 180.0, reverse: false, offset_deg: 0.0}
+  "9": {deg_min: 0.0, deg_max: 180.0, reverse: false, offset_deg: 0.0}
+  "10": {deg_min: 0.0, deg_max: 180.0, reverse: false, offset_deg: 0.0}
+  "11": {deg_min: 0.0, deg_max: 180.0, reverse: false, offset_deg: 0.0}
+  "12": {deg_min: 0.0, deg_max: 180.0, reverse: false, offset_deg: 0.0}
+  "13": {deg_min: 0.0, deg_max: 180.0, reverse: false, offset_deg: 0.0}
+  "14": {deg_min: 0.0, deg_max: 180.0, reverse: false, offset_deg: 0.0}
+  "15": {deg_min: 0.0, deg_max: 180.0, reverse: false, offset_deg: 0.0}
+  "16": {deg_min: 0.0, deg_max: 180.0, reverse: false, offset_deg: 0.0}

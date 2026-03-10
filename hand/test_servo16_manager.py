@@ -39,33 +39,29 @@ def main() -> None:
             min_pulse_us=500,
             max_pulse_us=2500,
         )
-    step_angles = list(range(0, 181, 15))
-
     try:
         manager.start()
         print("\n[*] 开始往返：CH1~CH4 同步（参数与 test_servo_driver.py 一致）")
         while True:
             for channel in channels:
                 manager.set_channel_enabled(channel, True)
-            for angle in step_angles:
-                print(f"→ CH1~CH4 目标角度: {angle:3d}°")
-                manager.set_targets({channel: angle for channel in channels}, enable=True)
-                time.sleep(0.05)
+            print("→ CH1~CH4 目标角度:   0°")
+            manager.set_targets({channel: 0 for channel in channels}, enable=True)
+            time.sleep(1.0)
 
             for channel in channels:
                 manager.set_channel_enabled(channel, False)
-            time.sleep(1)
+            time.sleep(1.0)
 
             for channel in channels:
                 manager.set_channel_enabled(channel, True)
-            for angle in reversed(step_angles):
-                print(f"→ CH1~CH4 目标角度: {angle:3d}°")
-                manager.set_targets({channel: angle for channel in channels}, enable=True)
-                time.sleep(0.05)
+            print("→ CH1~CH4 目标角度: 180°")
+            manager.set_targets({channel: 180 for channel in channels}, enable=True)
+            time.sleep(1.0)
 
             for channel in channels:
                 manager.set_channel_enabled(channel, False)
-            time.sleep(1)
+            time.sleep(1.0)
     except KeyboardInterrupt:
         print("\n\n用户中断操作")
     finally:

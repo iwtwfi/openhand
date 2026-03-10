@@ -74,22 +74,44 @@ class HandUpperController:
         # 启动阶段即做一次严格校验，尽早发现配置问题。
         self._validate_calibration()
 
-    def set_joint_u(self, channel: int, u: float, enable: bool = True) -> None:
+    def set_joint_u(
+        self,
+        channel: int,
+        u: float,
+        enable: bool = True,
+        settle_s: float | None = None,
+        relax_after_settle: bool = False,
+    ) -> None:
         """设置单关节归一化目标。
 
         参数：
             channel: 通道号（1~16）。
             u: 归一化目标值，建议范围 [0, 1]（内部会裁剪）。
             enable: 是否使能该通道输出。False 时会主动关闭该通道。
+            settle_s: 到位等待时间（秒）。仅在 relax_after_settle=True 且 enable=True 时生效。
+            relax_after_settle: True 时会在等待后自动关闭该通道输出。
         """
         self._assert_channel(channel)
         updates = self._build_updates({channel: u})
         if updates:
-            self.manager.set_targets(updates, enable=enable)
+            if enable and relax_after_settle:
+                self.manager.set_targets_and_relax(
+                    updates,
+                    settle_s=0.5 if settle_s is None else float(settle_s),
+                )
+            else:
+                self.manager.set_targets(updates, enable=enable)
         if not enable:
             self.manager.set_channel_enabled(channel, False)
 
-    def set_finger_u(self, finger: FingerName, u_list: Sequence[float], enable: bool = True) -> None:
+    def set_finger_u(
+        self,
+        finger: FingerName,
+        u_list: Sequence[float],
+        enable: bool = True,
+        settle_s: float | None = None,
+        relax_after_settle: bool = False,
+    ) -> None:
         """设置单个手指的归一化目标。
 
         参数：
@@ -97,6 +119,8 @@ class HandUpperController:
             u_list: 该手指各自由度的目标列表。
                     thumb 必须 4 个值，其余手指必须 3 个值。
             enable: 是否使能该手指对应通道输出。
+            settle_s: 到位等待时间（秒）。仅在 relax_after_settle=True 且 enable=True 时生效。
+            relax_after_settle: True 时会在等待后自动关闭该手指对应通道输出。
         """
         channels = self._finger_channels(finger)
         if len(u_list) != len(channels):
@@ -104,21 +128,41 @@ class HandUpperController:
         # 将该手指每个自由度与对应通道配对后统一下发。
         updates = self._build_updates({ch: u for ch, u in zip(channels, u_list)})
         if updates:
-            self.manager.set_targets(updates, enable=enable)
+            if enable and relax_after_settle:
+                self.manager.set_targets_and_relax(
+                    updates,
+                    settle_s=0.5 if settle_s is None else float(settle_s),
+                )
+            else:
+                self.manager.set_targets(updates, enable=enable)
         if not enable:
             for ch in channels:
                 self.manager.set_channel_enabled(ch, False)
 
-    def set_hand_u(self, hand_u_map: Mapping[int, float], enable: bool = True) -> None:
+    def set_hand_u(
+        self,
+        hand_u_map: Mapping[int, float],
+        enable: bool = True,
+        settle_s: float | None = None,
+        relax_after_settle: bool = False,
+    ) -> None:
         """设置整手/多通道归一化目标。
 
         参数：
             hand_u_map: {channel: u} 的映射，支持一次更新多路。
             enable: 是否使能这些通道输出。False 时会关闭传入的对应通道。
+            settle_s: 到位等待时间（秒）。仅在 relax_after_settle=True 且 enable=True 时生效。
+            relax_after_settle: True 时会在等待后自动关闭本次传入通道输出。
         """
         updates = self._build_updates(hand_u_map)
         if updates:
-            self.manager.set_targets(updates, enable=enable)
+            if enable and relax_after_settle:
+                self.manager.set_targets_and_relax(
+                    updates,
+                    settle_s=0.5 if settle_s is None else float(settle_s),
+                )
+            else:
+                self.manager.set_targets(updates, enable=enable)
         if not enable:
             for ch in hand_u_map.keys():
                 self._assert_channel(ch)
