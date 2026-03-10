@@ -1,6 +1,6 @@
 serial:
   port: "/dev/ttyUSB0"
-  baudrate: 230400
+  baudrate: 921600
   timeout: 0.3
 
 manager:

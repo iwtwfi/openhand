@@ -16,7 +16,7 @@ def main() -> None:
 
     controller = GPIO16Controller(
         port="/dev/ttyUSB0",  # 请按实际串口修改
-        baudrate=230400,
+        baudrate=921600,
         timeout=0.3,
     )
 

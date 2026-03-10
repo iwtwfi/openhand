@@ -91,6 +91,7 @@ def main() -> None:
     try:
         # 6) 启动下层调度线程。
         manager.start()
+        upper.set_joint_u(channel=1, u=0.5, enable=True)
         print("runtime started, waiting for external controller, press Ctrl+C to exit")
         while True:
             # 7) 主循环不直接下发动作，仅等待外部逻辑调用：

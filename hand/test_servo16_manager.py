@@ -16,7 +16,7 @@ def main() -> None:
 
     controller = GPIO16Controller(
         port="/dev/ttyUSB0",  # 请按实际串口修改
-        baudrate=230400,
+        baudrate=921600,
         timeout=0.3,
     )
 
@@ -31,7 +31,7 @@ def main() -> None:
         verbose=False,
     )
 
-    channels = [1, 2, 3, 4,5,6,7,8]
+    channels = [1, 2, 3, 4,5,6,7,8,9,10,11,12,13,14,15,16]
     for channel in channels:
         manager.set_channel_config(
             channel=channel,
