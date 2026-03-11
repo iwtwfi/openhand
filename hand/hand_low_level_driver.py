@@ -12,7 +12,7 @@ class GPIO16Controller:
 
     CMD_WRITE_CONTINUOUS = 0x3B
 
-    def __init__(self, port: str = "/dev/ttyUSB0", baudrate: int = 921600, timeout: float = 0.3):
+    def __init__(self, port: str = "/dev/ttyUSB0", baudrate: int = 2000000, timeout: float = 0.3):
         self.port = port
         self.baudrate = baudrate
         self.timeout = timeout

@@ -151,8 +151,16 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--enable-gesture",
+        dest="enable_gesture",
         action="store_true",
-        help="Enable hand gesture digit recognition (requires mediapipe).",
+        default=True,
+        help="Enable hand gesture digit recognition (requires mediapipe, default: enabled).",
+    )
+    parser.add_argument(
+        "--disable-gesture",
+        dest="enable_gesture",
+        action="store_false",
+        help="Disable hand gesture digit recognition.",
     )
     parser.add_argument(
         "--gesture-max-hands",
@@ -219,8 +227,16 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--stdout-json",
+        dest="stdout_json",
         action="store_true",
-        help="Print one JSON object per frame to stdout (JSON Lines).",
+        default=True,
+        help="Print one JSON object per frame to stdout (JSON Lines, default: enabled).",
+    )
+    parser.add_argument(
+        "--no-stdout-json",
+        dest="stdout_json",
+        action="store_false",
+        help="Disable JSON Lines output to stdout.",
     )
     return parser.parse_args()
 
