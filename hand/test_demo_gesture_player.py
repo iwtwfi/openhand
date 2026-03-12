@@ -4,15 +4,14 @@
 
 from __future__ import annotations
 
-import time
-
 from demo_gesture_player import DemoGesturePlayer
 
 
 def main() -> None:
-    """手势播放测试入口（连续两个明显姿态）。"""
+    """手势播放测试入口（启动初始化 + 连续手势）。"""
     player = DemoGesturePlayer()
     try:
+        print("init: left -> right -> middle (1s each)")
         player.start()
         print("play: open_hand")
         player.play_gesture(

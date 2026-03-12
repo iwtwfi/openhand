@@ -67,7 +67,7 @@ class DemoGesturePlayer:
 
     典型用法：
         player = DemoGesturePlayer()
-        player.start()
+        player.start()  # start() 内部会自动执行初始化
         player.play_gesture("digit_1")
         player.play_gesture("fist", hold_ms=600)
         player.close()
@@ -99,6 +99,7 @@ class DemoGesturePlayer:
         self.upper = HandUpperController(manager=self.manager, config=self.runtime_cfg)
 
         self._started = False
+        self._initialized = False
 
     @staticmethod
     def _require_mapping(root: Mapping[str, Any], key: str) -> Mapping[str, Any]:
@@ -115,6 +116,7 @@ class DemoGesturePlayer:
             raise RuntimeError("failed to connect serial device")
         self.manager.start()
         self._started = True
+        self.initialize_runtime()
 
     def close(self) -> None:
         """安全停止输出并断开资源。"""
@@ -124,6 +126,7 @@ class DemoGesturePlayer:
         self.manager.stop()
         self.controller.disconnect()
         self._started = False
+        self._initialized = False
 
     def __enter__(self) -> "DemoGesturePlayer":
         self.start()
@@ -161,3 +164,53 @@ class DemoGesturePlayer:
                 time.sleep(settle_val)
             self.manager.set_all_enabled(False)
         time.sleep(max(0.0, hold_val / 1000.0))
+
+    def initialize_runtime(self, hold_s: float = 1.0, force: bool = False) -> None:
+        """执行启动初始化：最左 -> 最右 -> 最中间。"""
+        if not self._started:
+            self.start()
+            return
+        if self._initialized and not force:
+            return
+        hold_val = float(hold_s)
+        if hold_val < 0:
+            raise ValueError("hold_s must be >= 0")
+        settle_val = 0.5
+
+        all_channels = {
+            ch: 0.0
+            for channels in HandUpperController.FINGER_CHANNELS.values()
+            for ch in channels
+        }
+        self.upper.set_hand_u(
+            all_channels,
+            enable=True,
+            settle_s=settle_val,
+            relax_after_settle=True,
+        )
+        if hold_val > 0:
+            time.sleep(hold_val)
+
+        right_pose = {ch: 1.0 for ch in all_channels.keys()}
+        self.upper.set_hand_u(
+            right_pose,
+            enable=True,
+            settle_s=settle_val,
+            relax_after_settle=True,
+        )
+        if hold_val > 0:
+            time.sleep(hold_val)
+
+        center_pose = {ch: 0.5 for ch in all_channels.keys()}
+        self.upper.set_hand_u(
+            center_pose,
+            enable=True,
+            settle_s=settle_val,
+            relax_after_settle=True,
+        )
+        if hold_val > 0:
+            time.sleep(hold_val)
+
+        self._initialized = True
+        print("initial OK")
+        time.sleep(1)
