@@ -1,0 +1,14 @@
+version: 1
+tracks:
+  - track_id: generated_84
+    path: /home/xu/openhand/music/generated_dance_84bpm_50s.wav
+    bpm: 84
+    style: playful
+    energy_min: 0.3
+    energy_max: 0.7
+  - track_id: generated_72
+    path: /home/xu/openhand/music/generated_dance_72bpm_60s.wav
+    bpm: 72
+    style: calm
+    energy_min: 0.2
+    energy_max: 0.6
