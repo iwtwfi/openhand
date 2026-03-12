@@ -59,7 +59,8 @@ def test_service_flow() -> None:
 
     res_start = svc.handle_action({"action": "dance.start", "prompt": "跟随音乐跳舞 10秒"})
     assert res_start["state"] == RuntimeState.RUNNING
-    assert res_start["track_path"].endswith("generated_dance_100bpm_45s.wav")
+    assert res_start["track_id"]
+    assert Path(res_start["track_path"]).exists()
 
     res_pause = svc.handle_action({"action": "dance.pause"})
     assert res_pause["state"] == RuntimeState.PAUSED

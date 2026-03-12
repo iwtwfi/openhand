@@ -67,7 +67,8 @@ class DemoGesturePlayer:
 
     典型用法：
         player = DemoGesturePlayer()
-        player.start()  # start() 内部会自动执行初始化
+        player.start()
+        player.initialize_runtime(force=True)
         player.play_gesture("digit_1")
         player.play_gesture("fist", hold_ms=600)
         player.close()
@@ -116,7 +117,6 @@ class DemoGesturePlayer:
             raise RuntimeError("failed to connect serial device")
         self.manager.start()
         self._started = True
-        self.initialize_runtime()
 
     def close(self) -> None:
         """安全停止输出并断开资源。"""
@@ -169,7 +169,6 @@ class DemoGesturePlayer:
         """执行启动初始化：最左 -> 最右 -> 最中间。"""
         if not self._started:
             self.start()
-            return
         if self._initialized and not force:
             return
         hold_val = float(hold_s)
