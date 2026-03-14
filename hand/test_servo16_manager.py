@@ -46,7 +46,7 @@ def main() -> None:
             for channel in channels:
                 manager.set_channel_enabled(channel, True)
             print("→ CH1~CH4 目标角度:   0°")
-            manager.set_targets({channel: 0 for channel in channels}, enable=True)
+            manager.set_targets({channel: 125 for channel in channels}, enable=True)
             time.sleep(1.0)
 
             for channel in channels:
@@ -55,8 +55,8 @@ def main() -> None:
 
             for channel in channels:
                 manager.set_channel_enabled(channel, True)
-            print("→ CH1~CH4 目标角度: 180°")
-            manager.set_targets({channel: 180 for channel in channels}, enable=True)
+            print("→ CH1~CH4 目标角度:  90°")
+            manager.set_targets({channel: 180  for channel in channels}, enable=True)
             time.sleep(1.0)
 
             for channel in channels:
